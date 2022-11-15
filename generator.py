@@ -6,7 +6,7 @@ import math
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
-def create_train_generator(train_dir = None):
+def create_training_generators(train_dir = None):
     """return generator containing training and validation generators to fit model"""
 
     if train_dir is None:
@@ -69,4 +69,4 @@ def create_train_generator(train_dir = None):
     train_generator = zip(image_train_generator, mask_train_generator)
     val_generator = zip(image_val_generator, mask_val_generator)
 
-    return train_generator, val_generator
+    return train_generator, val_generator, len(image_train_generator), len(image_val_generator)
