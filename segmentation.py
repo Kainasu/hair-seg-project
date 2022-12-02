@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 from keras.models import load_model
+import time
 
 def predict_and_plot(img_path, model, mask_path=None):
     ncols = 3
@@ -14,7 +15,16 @@ def predict_and_plot(img_path, model, mask_path=None):
         mask = np.asarray(Image.open(mask_path).resize((128,128)).convert('L'))/255.
         ncols += 1
 
+    start = time.time()
     pred = model.predict(img[np.newaxis,:,:,:])
+    end = time.time()
+    print(end-start)
+
+    start = time.time()
+    pred = model.predict(img[np.newaxis,:,:,:])
+    end = time.time()
+    print(end-start)
+
     treshold = 0.7
     pred_mask = ((pred > treshold) * 255.)
     
@@ -33,8 +43,11 @@ def predict_and_plot(img_path, model, mask_path=None):
         plt.subplot(1,ncols,4)
         plt.imshow(mask)
         plt.title("GT")
-    
+        
+        start = time.time()
         score = model.evaluate(img[np.newaxis,:,:,:], mask[np.newaxis,:,:])
+        end = time.time()
+        print(end-start)
         print("accuacy : ", score[1])
     
     plt.show()
@@ -45,4 +58,5 @@ if __name__ == '__main__':
     parser.add_argument('--mask', dest='mask_path', action='store')
     parser.add_argument('--model', dest='model', action='store', required=True)
     args = parser.parse_args()
+
     predict_and_plot(args.img_path, args.model, mask_path=args.mask_path)
