@@ -2,14 +2,15 @@ import argparse
 import cv2
 from keras.models import load_model
 import numpy as np
+from coloration import change_color
 
 def process_frame(frame, model, image_size=(128,128,3)):
     original_size = frame.shape
     frame = cv2.resize(frame, image_size)
     model = load_model(model)
     mask = model(frame)
-    frame = color(frame, mask)
-    return cv2.resize(frame, original_size)
+    frame = change_color(frame, mask, '#0000FF')
+    return frame #TODO resize to original size
     
 
 if __name__ == '__main__':
