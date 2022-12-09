@@ -37,11 +37,12 @@ echo "dataset downloaded!"
 echo "start preprocessing "
 # remove the folders that contain the images and put the images in the Lfw/lfw_funneled folder
 
-mkdir images
+mkdir imgs
 
-mv lfw_funneled/* images/
+mv lfw_funneled/*/* imgs/
 rm -r lfw_funneled
 
+cd ..
 #run lfw_preprocessing.py
 python3 lfw_preprocessing.py
 
@@ -51,13 +52,13 @@ mkdir Lfw/Testing/imgs/Original
 mkdir Lfw/Testing/masks/GT
 
 # move the images and masks to the corresponding folders
-mv images/* Lfw/Training/imgs/Original/
-mv masks/* Lfw/Training/masks/GT/
+mv Lfw/Training/imgs/* Lfw/Training/imgs/Original/
+mv Lfw/Training/masks/* Lfw/Training/masks/GT/
+mv Lfw/Testing/imgs/* Lfw/Testing/imgs/Original/
+mv Lfw/Testing/masks/* Lfw/Testing/masks/GT/
 
-
-
-
-
+rm -r Lfw/imgs Lfw/masks 
+rm Lfw/parts_test.txt Lfw/parts_train.txt Lfw/parts_train_val.txt Lfw/parts_validation.txt 
 
 
 

@@ -2,8 +2,14 @@ import os
 import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
+import shutil
 
+#remove the files that start with '.'
+for file in os.listdir('Lfw/masks'):
+    if file.startswith('.'):
+        os.remove('Lfw/masks/' + file)
 
+os.makedirs('Lfw/masks_png/')
 #convert all ppm files to png files
 for file in os.listdir('Lfw/masks'):
     if file.endswith('.ppm'):
@@ -12,14 +18,12 @@ for file in os.listdir('Lfw/masks'):
         hair.save('Lfw/masks_png/' + file.split('.')[0] + '.png')
 
 # delete folder lfw/masks and rename folder lfw/masks_png to lfw/masks
-os.rmdir('Lfw/masks')
+shutil.rmtree('Lfw/masks')
 os.rename('Lfw/masks_png', 'Lfw/masks')
 
-#remove the files that start with '.'
-for file in os.listdir('Lfw/masks'):
-    if file.startswith('.'):
-        os.remove('Lfw/masks/' + file)
 
+
+os.makedirs('Lfw/masks_binary/')
 # convert masks to hair masks
 for file in os.listdir('Lfw/masks'):
     mask = Image.open('Lfw/masks/' + file)
@@ -32,7 +36,7 @@ for file in os.listdir('Lfw/masks'):
     mask_map.save('Lfw/masks_binary/' + file)
 
 #delete folder lfw/masks and rename folder lfw/masks_binary to lfw/masks
-os.rmdir('Lfw/masks')
+shutil.rmtree('Lfw/masks')
 os.rename('Lfw/masks_binary', 'Lfw/masks')
     
 # split the dataset into train and testing directories
