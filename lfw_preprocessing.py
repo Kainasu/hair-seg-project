@@ -63,6 +63,15 @@ def split_lfw():
         os.makedirs(train_dir)
     if not os.path.isdir(test_dir):
         os.makedirs(test_dir)
+    if not os.path.isdir(os.path.join(train_dir, 'imgs')):
+        os.makedirs(os.path.join(train_dir, 'imgs'))
+    if not os.path.isdir(os.path.join(train_dir, 'masks')):
+        os.makedirs(os.path.join(train_dir, 'masks'))
+    if not os.path.isdir(os.path.join(test_dir, 'imgs')):
+        os.makedirs(os.path.join(test_dir, 'imgs'))
+    if not os.path.isdir(os.path.join(test_dir, 'masks')):
+        os.makedirs(os.path.join(test_dir, 'masks'))
+        
     for elem in name_list:
         img = Image.open(os.path.join(img_dir, elem[1]+'.jpg'))
         mask = Image.open(os.path.join(mask_dir, elem[1]+'.png'))
@@ -76,4 +85,5 @@ def split_lfw():
         mask.save(os.path.join(test_dir, 'masks', elem[1]+'.png'))
 
 split_lfw()
+
 

@@ -42,6 +42,20 @@ mkdir images
 mv lfw_funneled/* images/
 rm -r lfw_funneled
 
+#run lfw_preprocessing.py
+python3 lfw_preprocessing.py
+
+mkdir Lfw/Training/imgs/Original
+mkdir Lfw/Training/masks/GT   
+mkdir Lfw/Testing/imgs/Original
+mkdir Lfw/Testing/masks/GT
+
+# move the images and masks to the corresponding folders
+mv images/* Lfw/Training/imgs/Original/
+mv masks/* Lfw/Training/masks/GT/
+
+
+
 
 
 
