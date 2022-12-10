@@ -22,12 +22,8 @@ if __name__ == '__main__':
         plt.legend()
         plt.show()
     
-        plt.plot(h.history['acc'], label='acc')
-        plt.title('Model accuracy')
-        plt.legend()
-        plt.show()
-    
-        plt.plot(h.history['loss'], label='loss')
-        plt.legend()
+        plt.plot(h.history['binary_io_u'], label='binary_io_u')
+        plt.plot(h.history['val_binary_io_u'], label='val_binary_io_u')
         plt.title('Model Loss')
+        plt.legend()
         plt.show()

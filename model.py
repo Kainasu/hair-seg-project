@@ -5,7 +5,7 @@ from keras.optimizers import Adam
 from keras import regularizers
 from keras.callbacks import ReduceLROnPlateau
 from keras.losses import BinaryCrossentropy
-from keras.metrics import MeanIoU
+from keras.metrics import BinaryIoU
 
 def create_unet(image_size=(128,128,3)):
     """returns unet model"""
@@ -73,7 +73,7 @@ def create_unet(image_size=(128,128,3)):
 
     model = Model(inputs=[inputs], outputs=[conv10])
 
-    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['acc'])
+    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['acc', BinaryIoU()])
 
     return model
     
