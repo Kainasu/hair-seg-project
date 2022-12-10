@@ -30,7 +30,7 @@ if __name__ == '__main__':
         # by frame
         ret, frame = vid.read()
         
-        frame = process_frame(frame)
+        frame = process_frame(frame, model)
         
         # Display the resulting frame
         cv2.imshow('frame', frame)

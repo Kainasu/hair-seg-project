@@ -35,7 +35,7 @@ def create_mobile_unet(image_size=(128,128,3)):
 
     inputs = Input(image_size)
     
-    #Contraction
+    #Encoder
     
     conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(inputs)
     conv1 = BatchNormalization()(conv1)
@@ -57,7 +57,44 @@ def create_mobile_unet(image_size=(128,128,3)):
     conv2 = Conv2D(1280, (1,1), activation='relu', padding='same')(bottleneck7)
     conv2 = BatchNormalization()(conv2)
     
-    #Expansion
+    #Decoder
+
+    up6 = concatenate([Conv2DTranspose(320, (2, 2), strides=(2, 2), padding='same')(conv2), bottleneck7], axis=3) #Was conv5 instead of conv6a
+    conv6 = Conv2D(320, (3, 3), activation='relu', padding='same')(up6)
+    conv6 = BatchNormalization()(conv6)
+    conv6 = Conv2D(320, (3, 3), activation='relu', padding='same')(conv6)
+    conv6 = BatchNormalization()(conv6)
+    up7 = concatenate([Conv2DTranspose(160, (2, 2), strides=(2, 2), padding='same')(conv6), bottleneck6], axis=3)
+    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
+    conv7 = BatchNormalization()(conv7)
+    conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
+    conv7 = BatchNormalization()(conv7)
+    up8 = concatenate([Conv2DTranspose(96, (2, 2), strides=(2, 2), padding='same')(conv7), bottleneck5], axis=3)
+    conv8 = Conv2D(96, (3, 3), activation='relu', padding='same')(up8)
+    conv8 = BatchNormalization()(conv8)
+    conv8 = Conv2D(96, (3, 3), activation='relu', padding='same')(conv8)
+    conv8 = BatchNormalization()(conv8)
+
+    up9 = concatenate([Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')(conv8), bottleneck4], axis=3)
+    conv9 = Conv2D(64, (3, 3), activation='relu', padding='same')(up9)
+    conv9 = BatchNormalization()(conv9)
+    conv9 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv9)
+    conv9 = BatchNormalization()(conv9)
+    up10 = concatenate([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(conv9), bottleneck3], axis=3)
+    conv10 = Conv2D(32, (3, 3), activation='relu', padding='same')(up10)
+    conv10 = BatchNormalization()(conv10)
+    conv10 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv10)
+    conv10 = BatchNormalization()(conv10)
+    up11 = concatenate([Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same')(conv10), bottleneck2], axis=3)
+    conv11 = Conv2D(32, (3, 3), activation='relu', padding='same')(up11)
+    conv11 = BatchNormalization()(conv11)
+    conv11 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv11)
+    conv11 = BatchNormalization()(conv11)
+    conv12 = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(conv11)
+
+    model = Model(inputs=[inputs], outputs=[conv12])
+
+
 
     # d_bottleneck1 = inverted_residual_block(conv2, 96, strides=(2,2), expansion_factor=6)
 

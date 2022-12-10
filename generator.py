@@ -10,7 +10,7 @@ def create_training_generators(train_dir = None):
     """return generator containing training and validation generators to fit model"""
 
     if train_dir is None:
-        train_dir = './Figaro1k/Training'
+        train_dir = './Lfw/Training'
 
     # data augmentation
     data_gen_args = dict(featurewise_center=False,
@@ -70,3 +70,31 @@ def create_training_generators(train_dir = None):
     val_generator = zip(image_val_generator, mask_val_generator)
 
     return train_generator, val_generator, len(image_train_generator), len(image_val_generator)
+
+def create_testing_generator(test_dir = None):
+    if test_dir is None:
+        test_dir = './Figaro1k/Testing'
+        
+    # Generator for test
+    image_test_datagen = ImageDataGenerator(rescale = 1.0/255.0)
+    image_test_generator = image_test_datagen.flow_from_directory(
+    os.path.join(test_dir, 'imgs'),
+    color_mode = "rgb",
+    target_size=(128,128),
+    class_mode=None,
+    shuffle=False,
+    batch_size=1)
+
+    # Generator for test
+    mask_test_datagen = ImageDataGenerator(rescale = 1.0/255.0)
+    mask_test_generator = mask_test_datagen.flow_from_directory(
+    os.path.join(test_dir, 'masks'),
+    color_mode = "grayscale",
+    target_size=(128,128),
+    class_mode=None,
+    shuffle=False,
+    batch_size=1)
+
+    test_generator = zip(image_test_generator, mask_test_generator)
+
+    return test_generator, len(image_test_generator)
