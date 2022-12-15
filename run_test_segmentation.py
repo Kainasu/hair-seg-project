@@ -1,31 +1,106 @@
 from generator import create_testing_generator, create_training_generators
 import os
-import numpy as np
-from model import create_unet
-from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Conv2DTranspose, concatenate, BatchNormalization, Dropout
-from keras.models import Model, load_model
-from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.optimizers import Adam
-from keras import regularizers
-from keras.callbacks import ReduceLROnPlateau
-from keras.losses import BinaryCrossentropy
-from keras.metrics import MeanIoU
+from keras.models import load_model
 import argparse
+import glob
+import pandas
+
+def latest_model_dir(directory = 'models/Figaro1k-aug'):
+    return sorted(glob.glob(os.path.join(directory, 'model*')))[-1]
 
 if __name__ == '__main__':
     
-    parser = argparse.ArgumentParser()        
-    parser.add_argument('--model', dest='model', action='store', required=True)    
+    parser = argparse.ArgumentParser()
+
+    # Add argument for dataset
+    parser.add_argument('--dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', 'all'],
+    help='dataset used (Lfw or Figaro1k', default='all')
+
+    parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', None],
+    help='dataset used (Lfw or Figaro1k', default=None)
+
+    # Add argument for augmentation
+    parser.add_argument('--no-augmentation', dest='augmentation', action='store_false')
+    parser.add_argument('--augmentation', dest='augmentation', action='store_true')
+    parser.set_defaults(augmentation=True)
+
     args = parser.parse_args()
 
-    root_dir = './'
-    model = load_model(args.model)
-    train_generator, val_generator, train_steps, val_steps = create_training_generators()
-    test_generator, test_steps = create_testing_generator()
-    score = model.evaluate(train_generator, steps=train_steps)
-    print(f'Training ==> acc: {score[1]}')
-    score = model.evaluate(test_generator, steps=test_steps)
-    print(f'Testing ==> acc: {score[1]}')
+    # Get the values of the arguments
+    dataset = args.dataset
+    dataset_path = os.path.join('data', dataset)
+    augmentation = args.augmentation
+    aug = 'aug' if augmentation else 'no-aug'
+    test_dataset = dataset if args.test_dataset is None else args.test_dataset
+    test_dataset_path = os.path.join('data', test_dataset)
+        
+    #Empty list to store results
+    results = []
+
+    if dataset == 'all':
+        dataset_dir = sorted(glob.glob(os.path.join('models', '*')))        
+        for dir in dataset_dir:
+            model_dir = latest_model_dir(dir)
+            model_filename  = os.path.join(model_dir, 'model.h5')
+            model = load_model(model_filename)
+            print('==================', dir)
+            if dir[-6:] =='no-aug':                
+                dataset = dir[7:-7]
+                dataset_path = os.path.join('data', dataset)
+                test_dataset = dataset if args.test_dataset is None else args.test_dataset
+                test_dataset_path = os.path.join('data', test_dataset)
+                augmentation = False
+                train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
+                test_generator, test_steps = create_testing_generator(test_dataset_path)
+                score_train = model.evaluate(train_generator, steps=train_steps)                
+                score_val = model.evaluate(val_generator, steps= val_steps)
+                score_test = model.evaluate(test_generator, steps=test_steps)                
+            else : 
+                dataset = dir[7:-4]
+                dataset_path = os.path.join('data', dataset)
+                test_dataset = dataset if args.test_dataset is None else args.test_dataset
+                test_dataset_path = os.path.join('data', test_dataset)
+                augmentation = True
+                train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
+                test_generator, test_steps = create_testing_generator(test_dataset_path)
+                score_train = model.evaluate(train_generator, steps=train_steps)                
+                score_val = model.evaluate(val_generator, steps= val_steps)
+                score_test = model.evaluate(test_generator, steps=test_steps)                
+                
+            results.append({'dataset': dataset, 'augmentation': augmentation,
+                'loss_train' : f'{score_train[0]:.5f}', 'acc_train' : f'{score_train[1]:.5f}', 'iou_train' : f'{score_train[2]:.5f}',
+                'loss_val' : f'{score_val[0]:.5f}', 'acc_val' : f'{score_val[1]:.5f}', 'iou_val' : f'{score_val[2]:.5f}',
+                'test_dataset' : test_dataset,
+                'loss_test' : f'{score_test[0]:.5f}', 'acc_test' : f'{score_test[1]:.5f}', 'iou_test' : f'{score_test[2]:.5f}',
+            })
+
+    else : 
+        dataset_dir = os.path.join('models', dataset + '-' + aug )
+        print('==================', dataset_dir)
+        model_dir = latest_model_dir(dataset_dir)
+        model_filename  = os.path.join(model_dir, 'model.h5')
+        model = load_model(model_filename)
+        train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
+        test_generator, test_steps = create_testing_generator(test_dataset_path)
+        score_train = model.evaluate(train_generator, steps=train_steps)                
+        score_val = model.evaluate(val_generator, steps= val_steps)
+        score_test = model.evaluate(test_generator, steps=test_steps)
+
+        results.append({'dataset': dataset, 'augmentation': augmentation,
+            'loss_train' : f'{score_train[0]:.5f}', 'acc_train' : f'{score_train[1]:.5f}', 'iou_train' : f'{score_train[2]:.5f}',
+            'loss_val' : f'{score_val[0]:.5f}', 'acc_val' : f'{score_val[1]:.5f}', 'iou_val' : f'{score_val[2]:.5f}',
+            'test_dataset' : test_dataset,
+            'loss_test' : f'{score_test[0]:.5f}', 'acc_test' : f'{score_test[1]:.5f}', 'iou_test' : f'{score_test[2]:.5f}',
+        })
     
+    #Print and save results
+    results_dataframe = pandas.DataFrame(results)
+    print(results_dataframe)
+
+    dirname = 'results'
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
     
+    filename = os.path.join(dirname, 'results.csv')
+    results_dataframe.to_csv(filename, header=True, index=False, sep='\t', mode='a')
     

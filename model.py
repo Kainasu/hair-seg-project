@@ -1,9 +1,5 @@
 from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Conv2DTranspose, concatenate, BatchNormalization, Dropout
-from keras.models import Model, load_model
-from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.optimizers import Adam
-from keras import regularizers
-from keras.callbacks import ReduceLROnPlateau
+from keras.models import Model
 from keras.losses import BinaryCrossentropy
 from keras.metrics import BinaryIoU
 
@@ -37,18 +33,8 @@ def create_unet(image_size=(128,128,3)):
     conv5 = BatchNormalization()(conv5)
     conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(conv5)
     conv5 = BatchNormalization()(conv5)
-    # poo5a = MaxPooling2D(pool_size=(2, 2))(conv5)
-    # conv5a = Conv2D(1024, (3, 3), activation='relu', padding='same')(poo5a)
-    # conv5a = BatchNormalization()(conv5a)
-    # conv5a = Conv2D(1024, (3, 3), activation='relu', padding='same')(conv5a)
-    # conv5a = BatchNormalization()(conv5a)
 
     #Upsampling
-    # up6a = concatenate([Conv2DTranspose(512, (2, 2), strides=(2, 2), padding='same')(conv5a), conv5], axis=3)
-    # conv6a = Conv2D(512, (3, 3), activation='relu', padding='same')(up6a)
-    # conv6a = BatchNormalization()(conv6a)
-    # conv6a = Conv2D(512, (3, 3), activation='relu', padding='same')(conv6a)
-    # conv6a = BatchNormalization()(conv6a)
     up6 = concatenate([Conv2DTranspose(256, (2, 2), strides=(2, 2), padding='same')(conv5), conv4], axis=3) #Was conv5 instead of conv6a
     conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(up6)
     conv6 = BatchNormalization()(conv6)

@@ -1,8 +1,5 @@
 import os
-import numpy as np
-from PIL import Image
 import matplotlib.pyplot as plt
-import math
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -10,7 +7,7 @@ def create_training_generators(dataset = None, augmentation=True):
     """return generator containing training and validation generators to fit model"""
 
     if dataset is None:
-        dataset = 'Figaro1k'
+        dataset = 'data/Figaro1k'
 
     train_dir = os.path.join(dataset, 'Training')
 
@@ -26,7 +23,9 @@ def create_training_generators(dataset = None, augmentation=True):
             zoom_range=0.2
         )
     else :
-        data_gen_args = dict(rescale = 1.0/255.0)
+        data_gen_args = dict(rescale = 1.0/255.0,
+                    validation_split=0.2
+        )
 
     image_args = dict(color_mode = "rgb",
         target_size=(128,128),
@@ -77,7 +76,7 @@ def create_training_generators(dataset = None, augmentation=True):
 
 def create_testing_generator(dataset = None):
     if dataset is None:
-        dataset = 'Figaro1k'
+        dataset = 'data/Figaro1k'
     
     test_dir = os.path.join(dataset, 'Testing')
     # Generator for test

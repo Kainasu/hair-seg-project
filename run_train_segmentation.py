@@ -4,11 +4,8 @@ import numpy as np
 from datetime import datetime
 import argparse
 from model import create_unet
-from keras.models import load_model
 from keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
-
-
 
 
 if __name__ == '__main__':
@@ -32,14 +29,15 @@ if __name__ == '__main__':
 
     # Get the values of the arguments
     dataset = args.dataset
+    dataset_path =os.path.join('data', dataset)
     augmentation = args.augmentation
     aug = 'aug' if augmentation else 'no-aug'
     epochs = args.epochs
     
     # Create model and generators
     model = create_unet()
-    train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset)
-    test_generator, test_steps = create_testing_generator(dataset=dataset)
+    train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset_path, augmentation=augmentation)
+    test_generator, test_steps = create_testing_generator(dataset=dataset_path)
 
     #Create directory to save model and history    
     dirname = f'models/{dataset}-{aug}'
@@ -66,18 +64,21 @@ if __name__ == '__main__':
     plt.title('Model accuracy')
     plt.legend()
     plt.savefig(os.path.join(save_dir, 'model_accuracy.png'))
+    plt.close()
     
     plt.plot(h.history['loss'], label='loss')
     plt.plot(h.history['val_loss'], label='val_loss')
     plt.title('Model Loss')
     plt.legend()
     plt.savefig(os.path.join(save_dir, 'model_loss.png'))
+    plt.close()
     
     plt.plot(h.history['binary_io_u'], label='iou')
     plt.plot(h.history['val_binary_io_u'], label='val_iou')
     plt.title('Model IoU')
     plt.legend()
     plt.savefig(os.path.join(save_dir, 'model_iou.png'))
+    plt.close()
 
 
     # Generate mask from testing set
