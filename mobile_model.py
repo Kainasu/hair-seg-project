@@ -59,12 +59,12 @@ def create_mobile_unet(image_size=(128,128,3)):
     
     #Decoder
 
-    up6 = concatenate([Conv2DTranspose(320, (2, 2), strides=(2, 2), padding='same')(conv2), bottleneck7], axis=3) #Was conv5 instead of conv6a
+    up6 = concatenate([Conv2DTranspose(320, (2, 2), strides=(1, 1), padding='same')(conv2), bottleneck7], axis=3) #Was conv5 instead of conv6a
     conv6 = Conv2D(320, (3, 3), activation='relu', padding='same')(up6)
     conv6 = BatchNormalization()(conv6)
     conv6 = Conv2D(320, (3, 3), activation='relu', padding='same')(conv6)
     conv6 = BatchNormalization()(conv6)
-    up7 = concatenate([Conv2DTranspose(160, (2, 2), strides=(2, 2), padding='same')(conv6), bottleneck6], axis=3)
+    up7 = concatenate([Conv2DTranspose(160, (2, 2), strides=(1, 1), padding='same')(conv6), bottleneck6], axis=3)
     conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
     conv7 = BatchNormalization()(conv7)
     conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
@@ -75,7 +75,7 @@ def create_mobile_unet(image_size=(128,128,3)):
     conv8 = Conv2D(96, (3, 3), activation='relu', padding='same')(conv8)
     conv8 = BatchNormalization()(conv8)
 
-    up9 = concatenate([Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same')(conv8), bottleneck4], axis=3)
+    up9 = concatenate([Conv2DTranspose(64, (2, 2), strides=(1, 1), padding='same')(conv8), bottleneck4], axis=3)
     conv9 = Conv2D(64, (3, 3), activation='relu', padding='same')(up9)
     conv9 = BatchNormalization()(conv9)
     conv9 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv9)

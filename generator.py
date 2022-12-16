@@ -87,7 +87,8 @@ def create_testing_generator(dataset = None, shuffle=False):
     target_size=(128,128),
     class_mode=None,
     shuffle=shuffle,
-    batch_size=1)
+    batch_size=1,
+    seed=42)
 
     # Generator for test
     mask_test_datagen = ImageDataGenerator(rescale = 1.0/255.0)
@@ -97,7 +98,8 @@ def create_testing_generator(dataset = None, shuffle=False):
     target_size=(128,128),
     class_mode=None,
     shuffle=shuffle,
-    batch_size=1)
+    batch_size=1,
+    seed=42)
 
     test_generator = zip(image_test_generator, mask_test_generator)
 

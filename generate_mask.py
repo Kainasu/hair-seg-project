@@ -9,8 +9,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Add argument for dataset
-    parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', None],
-    help='dataset used (Lfw or Figaro1k', default=None)
+    parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k'],
+    help='dataset used (Lfw or Figaro1k', default='Lfw+Figaro1k')
 
     # Add argument for model
     parser.add_argument('--model', dest='model', type=str, action='store',
@@ -19,12 +19,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Get the values of the arguments
-    model = args.model
-    model_dir = model[:-8]                
-    test_dataset = dataset if args.test_dataset is None else args.test_dataset
+    model_file = args.model
+    model_dir = model_file[:-8]               
+    test_dataset = args.test_dataset
     test_dataset_path = os.path.join('data', test_dataset)
 
     test_generator, test_steps = create_testing_generator(dataset=test_dataset_path, shuffle=True)
+    model = load_model(model_file)
 
     # Generate mask from testing set
     cols = ['Original', 'GT', 'pred', 'tresholded pred']
