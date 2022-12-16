@@ -15,10 +15,10 @@ if __name__ == '__main__':
 
     # Add argument for dataset
     parser.add_argument('--dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k'],
-    help='dataset used (Lfw or Figaro1k', default='Figaro1k')
+    help='dataset used for training', default='Figaro1k')
 
     parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', None],
-    help='dataset used (Lfw or Figaro1k', default=None)
+    help='dataset used for testing', default=None)
 
     # Add argument for augmentation
     parser.add_argument('--no-augmentation', dest='augmentation', action='store_false')
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     plt.savefig(os.path.join(save_dir, 'model_iou.png'))
     plt.close()
 
-
+    #TODO Generate mask for all testing test (with parameter test-dataset = `all`)
     # Generate mask from testing set
     cols = ['Original', 'GT', 'pred', 'tresholded pred']
     max_png = 5

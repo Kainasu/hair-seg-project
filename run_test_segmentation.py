@@ -14,10 +14,10 @@ if __name__ == '__main__':
 
     # Add argument for dataset
     parser.add_argument('--dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', 'all'],
-    help='dataset used (Lfw or Figaro1k', default='all')
+    help='dataset used in training', default='all')
 
     parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', None],
-    help='dataset used (Lfw or Figaro1k', default=None)
+    help='dataset used for testing', default=None)
 
     # Add argument for augmentation
     parser.add_argument('--no-augmentation', dest='augmentation', action='store_false')
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     # Add argument for model type
     parser.add_argument('--model-type', type=str, dest='model_type', choices=['unet', 'mobile_unet'],
-    help='model used (unet or mobile_unet', default='unet')
+    help='model used (unet or mobile_unet)', default='unet')
 
     args = parser.parse_args()
 
@@ -63,7 +63,6 @@ if __name__ == '__main__':
                     score_val = model.evaluate(val_generator, steps= val_steps)
                     score_test = model.evaluate(test_generator, steps=test_steps)                
                 else : 
-                    print(model_type)
                     dataset = dir[len(model_type)+1:-4]
                     dataset_path = os.path.join('data', dataset)
                     test_dataset = dataset if args.test_dataset is None else args.test_dataset
@@ -75,7 +74,7 @@ if __name__ == '__main__':
                     score_val = model.evaluate(val_generator, steps= val_steps)
                     score_test = model.evaluate(test_generator, steps=test_steps)                
                 
-                results.append({'model':model_type, 'dataset': dataset, 'augmentation': augmentation,
+                results.append({'model':model_type[7:], 'dataset': dataset, 'augmentation': augmentation,
                     'loss_train' : f'{score_train[0]:.5f}', 'acc_train' : f'{score_train[1]:.5f}', 'iou_train' : f'{score_train[2]:.5f}',
                     'loss_val' : f'{score_val[0]:.5f}', 'acc_val' : f'{score_val[1]:.5f}', 'iou_val' : f'{score_val[2]:.5f}',
                     'test_dataset' : test_dataset,
@@ -95,7 +94,7 @@ if __name__ == '__main__':
         score_val = model.evaluate(val_generator, steps= val_steps)
         score_test = model.evaluate(test_generator, steps=test_steps)
 
-        results.append({'dataset': dataset, 'augmentation': augmentation,
+        results.append({'model':model_type, 'dataset': dataset, 'augmentation': augmentation,
             'loss_train' : f'{score_train[0]:.5f}', 'acc_train' : f'{score_train[1]:.5f}', 'iou_train' : f'{score_train[2]:.5f}',
             'loss_val' : f'{score_val[0]:.5f}', 'acc_val' : f'{score_val[1]:.5f}', 'iou_val' : f'{score_val[2]:.5f}',
             'test_dataset' : test_dataset,
