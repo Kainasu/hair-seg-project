@@ -4,6 +4,7 @@ import numpy as np
 from datetime import datetime
 import argparse
 from model import create_unet
+from mobile_model import create_mobile_unet
 from keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
 
@@ -28,7 +29,12 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int,
                     help='Number of epochs to train the model for', default=50)
 
+    # Add argument for model type
+    parser.add_argument('--model-type', type=str, dest='model_type', choices=['unet', 'mobile_unet'],
+    help='model used (unet or mobile_unet', default='unet')
+
     args = parser.parse_args()
+
 
     # Get the values of the arguments
     dataset = args.dataset
@@ -38,14 +44,18 @@ if __name__ == '__main__':
     epochs = args.epochs
     test_dataset = dataset if args.test_dataset is None else args.test_dataset
     test_dataset_path = os.path.join('data', test_dataset)
+    model_type = args.model_type
     
     # Create model and generators
-    model = create_unet()
+    if model_type == 'unet':
+        model = create_unet()
+    else : 
+        model = create_mobile_unet()
     train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset_path, augmentation=augmentation)
     test_generator, test_steps = create_testing_generator(dataset=test_dataset_path)
 
     #Create directory to save model and history    
-    dirname = f'models/{dataset}-{aug}'
+    dirname = f'models/{model_type}/{dataset}-{aug}'
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 

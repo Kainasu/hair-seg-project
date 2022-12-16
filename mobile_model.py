@@ -1,11 +1,7 @@
 from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Conv2DTranspose, concatenate, BatchNormalization, Dropout, Add, DepthwiseConv2D, Activation
-from keras.models import Model, load_model
-from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.optimizers import Adam
-from keras import regularizers
-from keras.callbacks import ReduceLROnPlateau
+from keras.models import Model
 from keras.losses import BinaryCrossentropy
-from keras.metrics import MeanIoU
+from keras.metrics import BinaryIoU
 
 def bottleneck_block(inputs, filters, strides=(1,1), expansion_factor=6, resi=False):
     expand = inputs.shape[-1] * expansion_factor    
@@ -112,7 +108,7 @@ def create_mobile_unet(image_size=(128,128,3)):
 
     model = Model(inputs=[inputs], outputs=[conv2])
 
-    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['acc'])
+    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['acc', BinaryIoU()])
 
     return model
     

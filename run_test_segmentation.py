@@ -24,6 +24,10 @@ if __name__ == '__main__':
     parser.add_argument('--augmentation', dest='augmentation', action='store_true')
     parser.set_defaults(augmentation=True)
 
+    # Add argument for model type
+    parser.add_argument('--model-type', type=str, dest='model_type', choices=['unet', 'mobile_unet'],
+    help='model used (unet or mobile_unet', default='unet')
+
     args = parser.parse_args()
 
     # Get the values of the arguments
@@ -33,49 +37,54 @@ if __name__ == '__main__':
     aug = 'aug' if augmentation else 'no-aug'
     test_dataset = dataset if args.test_dataset is None else args.test_dataset
     test_dataset_path = os.path.join('data', test_dataset)
+    model_type = args.model_type
         
     #Empty list to store results
     results = []
 
     if dataset == 'all':
-        dataset_dir = sorted(glob.glob(os.path.join('models', '*')))        
-        for dir in dataset_dir:
-            model_dir = latest_model_dir(dir)
-            model_filename  = os.path.join(model_dir, 'model.h5')
-            model = load_model(model_filename)
-            print('==================', dir)
-            if dir[-6:] =='no-aug':                
-                dataset = dir[7:-7]
-                dataset_path = os.path.join('data', dataset)
-                test_dataset = dataset if args.test_dataset is None else args.test_dataset
-                test_dataset_path = os.path.join('data', test_dataset)
-                augmentation = False
-                train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
-                test_generator, test_steps = create_testing_generator(test_dataset_path)
-                score_train = model.evaluate(train_generator, steps=train_steps)                
-                score_val = model.evaluate(val_generator, steps= val_steps)
-                score_test = model.evaluate(test_generator, steps=test_steps)                
-            else : 
-                dataset = dir[7:-4]
-                dataset_path = os.path.join('data', dataset)
-                test_dataset = dataset if args.test_dataset is None else args.test_dataset
-                test_dataset_path = os.path.join('data', test_dataset)
-                augmentation = True
-                train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
-                test_generator, test_steps = create_testing_generator(test_dataset_path)
-                score_train = model.evaluate(train_generator, steps=train_steps)                
-                score_val = model.evaluate(val_generator, steps= val_steps)
-                score_test = model.evaluate(test_generator, steps=test_steps)                
+        model_type_dir = sorted(glob.glob(os.path.join('models', '*')))        
+        for model_type in model_type_dir:
+            dataset_dir = sorted(glob.glob(os.path.join(model_type, '*')))        
+            for dir in dataset_dir:
+                model_dir = latest_model_dir(dir)
+                model_filename  = os.path.join(model_dir, 'model.h5')
+                model = load_model(model_filename)
+                print('==================', dir)
+                if dir[-6:] =='no-aug':                
+                    dataset = dir[len(model_type)+1:-7]
+                    dataset_path = os.path.join('data', dataset)
+                    test_dataset = dataset if args.test_dataset is None else args.test_dataset
+                    test_dataset_path = os.path.join('data', test_dataset)
+                    augmentation = False
+                    train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
+                    test_generator, test_steps = create_testing_generator(test_dataset_path)
+                    score_train = model.evaluate(train_generator, steps=train_steps)                
+                    score_val = model.evaluate(val_generator, steps= val_steps)
+                    score_test = model.evaluate(test_generator, steps=test_steps)                
+                else : 
+                    print(model_type)
+                    dataset = dir[len(model_type)+1:-4]
+                    dataset_path = os.path.join('data', dataset)
+                    test_dataset = dataset if args.test_dataset is None else args.test_dataset
+                    test_dataset_path = os.path.join('data', test_dataset)
+                    augmentation = True
+                    train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
+                    test_generator, test_steps = create_testing_generator(test_dataset_path)
+                    score_train = model.evaluate(train_generator, steps=train_steps)                
+                    score_val = model.evaluate(val_generator, steps= val_steps)
+                    score_test = model.evaluate(test_generator, steps=test_steps)                
                 
-            results.append({'dataset': dataset, 'augmentation': augmentation,
-                'loss_train' : f'{score_train[0]:.5f}', 'acc_train' : f'{score_train[1]:.5f}', 'iou_train' : f'{score_train[2]:.5f}',
-                'loss_val' : f'{score_val[0]:.5f}', 'acc_val' : f'{score_val[1]:.5f}', 'iou_val' : f'{score_val[2]:.5f}',
-                'test_dataset' : test_dataset,
-                'loss_test' : f'{score_test[0]:.5f}', 'acc_test' : f'{score_test[1]:.5f}', 'iou_test' : f'{score_test[2]:.5f}',
-            })
+                results.append({'model':model_type, 'dataset': dataset, 'augmentation': augmentation,
+                    'loss_train' : f'{score_train[0]:.5f}', 'acc_train' : f'{score_train[1]:.5f}', 'iou_train' : f'{score_train[2]:.5f}',
+                    'loss_val' : f'{score_val[0]:.5f}', 'acc_val' : f'{score_val[1]:.5f}', 'iou_val' : f'{score_val[2]:.5f}',
+                    'test_dataset' : test_dataset,
+                    'loss_test' : f'{score_test[0]:.5f}', 'acc_test' : f'{score_test[1]:.5f}', 'iou_test' : f'{score_test[2]:.5f}',
+                })
 
     else : 
-        dataset_dir = os.path.join('models', dataset + '-' + aug )
+        model_type_dir = os.path.join('models', model_type)
+        dataset_dir = os.path.join(model_type_dir, dataset + '-' + aug )
         print('==================', dataset_dir)
         model_dir = latest_model_dir(dataset_dir)
         model_filename  = os.path.join(model_dir, 'model.h5')
