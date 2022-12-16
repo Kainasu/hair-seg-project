@@ -16,6 +16,9 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k'],
     help='dataset used (Lfw or Figaro1k', default='Figaro1k')
 
+    parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', None],
+    help='dataset used (Lfw or Figaro1k', default=None)
+
     # Add argument for augmentation
     parser.add_argument('--no-augmentation', dest='augmentation', action='store_false')
     parser.add_argument('--augmentation', dest='augmentation', action='store_true')
@@ -33,11 +36,13 @@ if __name__ == '__main__':
     augmentation = args.augmentation
     aug = 'aug' if augmentation else 'no-aug'
     epochs = args.epochs
+    test_dataset = dataset if args.test_dataset is None else args.test_dataset
+    test_dataset_path = os.path.join('data', test_dataset)
     
     # Create model and generators
     model = create_unet()
     train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset_path, augmentation=augmentation)
-    test_generator, test_steps = create_testing_generator(dataset=dataset_path)
+    test_generator, test_steps = create_testing_generator(dataset=test_dataset_path)
 
     #Create directory to save model and history    
     dirname = f'models/{dataset}-{aug}'
@@ -107,7 +112,7 @@ if __name__ == '__main__':
         axes[i, 3].axis('off')
         i += 1
         if i % 15 == 0:        
-            plt.savefig(os.path.join(save_dir, f'test_image_{nb_png}.png'))
+            plt.savefig(os.path.join(save_dir, f'test_image_{test_dataset}_{nb_png}.png'))
             nb_png += 1
             i = 0
         if nb_png > max_png:

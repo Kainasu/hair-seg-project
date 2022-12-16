@@ -74,7 +74,7 @@ def create_training_generators(dataset = None, augmentation=True):
 
     return train_generator, val_generator, len(image_train_generator), len(image_val_generator)
 
-def create_testing_generator(dataset = None):
+def create_testing_generator(dataset = None, shuffle=False):
     if dataset is None:
         dataset = 'data/Figaro1k'
     
@@ -86,7 +86,7 @@ def create_testing_generator(dataset = None):
     color_mode = "rgb",
     target_size=(128,128),
     class_mode=None,
-    shuffle=False,
+    shuffle=shuffle,
     batch_size=1)
 
     # Generator for test
@@ -96,7 +96,7 @@ def create_testing_generator(dataset = None):
     color_mode = "grayscale",
     target_size=(128,128),
     class_mode=None,
-    shuffle=False,
+    shuffle=shuffle,
     batch_size=1)
 
     test_generator = zip(image_test_generator, mask_test_generator)
