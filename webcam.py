@@ -4,13 +4,19 @@ from keras.models import load_model
 import numpy as np
 from coloration import change_color
 
-def process_frame(frame, model, image_size=(128,128,3)):
-    original_size = frame.shape
-    frame = cv2.resize(frame, image_size)
-    model = load_model(model)
-    mask = model(frame)
-    frame = change_color(frame, mask, '#0000FF')
-    return frame #TODO resize to original size
+def process_frame(frame, model):
+    frame = cv2.resize(frame, (128, 128))
+    frame = np.expand_dims(frame, axis=0)
+    frame = frame / 255.
+    frame = model.predict(frame)
+    treshold = 0.7
+    pred_mask = ((frame > treshold) * 255.)
+    frame = pred_mask[0] # 128x128x1
+    frame = frame.astype(np.uint8)
+    frame = np.squeeze(frame, axis=2) # 128x128
+    frame= cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR) # 128x128x3
+    frame = cv2.resize(frame, (frame_width, frame_height)) # 1280x720x3
+    return frame 
     
 
 if __name__ == '__main__':
@@ -20,6 +26,8 @@ if __name__ == '__main__':
     model = load_model(args.model)
 
     vid = cv2.VideoCapture(0)
+    frame_width = int(vid.get(3))
+    frame_height = int(vid.get(4))
     if vid.isOpened() is False:
         raise Exception("webcam not found")
     
