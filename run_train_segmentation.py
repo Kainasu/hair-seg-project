@@ -25,6 +25,11 @@ if __name__ == '__main__':
     parser.add_argument('--augmentation', dest='augmentation', action='store_true')
     parser.set_defaults(augmentation=True)
 
+    # Add argument for use of pretrained encoder
+    parser.add_argument('--no-pretrained', dest='pretrained', action='store_false')
+    parser.add_argument('--pretrained', dest='pretrained', action='store_true')
+    parser.set_defaults(pretrained=False)
+
     # Add argument for the number of epochs
     parser.add_argument('--epochs', type=int,
                     help='Number of epochs to train the model for', default=50)
@@ -41,6 +46,8 @@ if __name__ == '__main__':
     dataset_path =os.path.join('data', dataset)
     augmentation = args.augmentation
     aug = 'aug' if augmentation else 'no-aug'
+    pretrained = args.pretrained
+    pretrain = 'pretrained' if pretrained else 'no-pretrained'
     epochs = args.epochs
     test_dataset = dataset if args.test_dataset is None else args.test_dataset
     test_dataset_path = os.path.join('data', test_dataset)
@@ -50,7 +57,8 @@ if __name__ == '__main__':
     if model_type == 'unet':
         model = create_unet()
     else : 
-        model = create_mobile_unet()
+        model = create_mobile_unet(pretrained=pretrained)
+        model_type = f'{model_type}-{pretrain}'
     train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset_path, augmentation=augmentation)
     test_generator, test_steps = create_testing_generator(dataset=test_dataset_path)
 
