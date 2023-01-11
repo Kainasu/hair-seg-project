@@ -47,7 +47,7 @@ if __name__ == '__main__':
         for model_type in model_type_dir:
             dataset_dir = sorted(glob.glob(os.path.join(model_type, '*')))        
             for dir in dataset_dir:
-                model_dir = latest_model_dir(dir)
+                model_dir = os.path.join(dir, 'latest')
                 model_filename  = os.path.join(model_dir, 'model.h5')
                 model = load_model(model_filename)
                 print('==================', dir)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         model_type_dir = os.path.join('models', model_type)
         dataset_dir = os.path.join(model_type_dir, dataset + '-' + aug )
         print('==================', dataset_dir)
-        model_dir = latest_model_dir(dataset_dir)
+        model_dir = os.path.join(dataset_dir, 'latest')
         model_filename  = os.path.join(model_dir, 'model.h5')
         model = load_model(model_filename)
         train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset_path, augmentation)
