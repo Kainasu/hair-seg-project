@@ -34,7 +34,7 @@ def process_frame(frame, model):
 
     # Overlay the mask on the original image to highlight the hair
     result = cv2.bitwise_and(frame_1, frame_1, mask=mask)
-    result = cv2.resize(result, (frame.shape[1]*2, frame.shape[0]*2))
+    result = cv2.resize(result, (frame.shape[1], frame.shape[0]))
     return result
     
 def process_frame_color(frame, model):
@@ -43,10 +43,14 @@ def process_frame_color(frame, model):
     mask = np.expand_dims(frame_1, axis=0)
     mask = mask / 255.
     mask = model.predict(mask)
+    treshold = 0.7
+    pred_mask = ((mask > treshold) * 255.)
+    mask = pred_mask[0]
+    mask = mask.astype(np.uint8)
+    mask = np.squeeze(mask, axis=2)
     result=change_color(frame_1, mask, '#ff0000')
-    result=cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
     #resize the result to the original frame size
-    result = cv2.resize(result, (frame.shape[1]*2, frame.shape[0]*2))
+    result = cv2.resize(result, (frame.shape[1], frame.shape[0]))
     return result 
 
 if __name__ == '__main__':
@@ -68,7 +72,7 @@ if __name__ == '__main__':
         # by frame
         ret, frame = vid.read()
         
-        frame = process_frame(frame, model)
+        frame = process_frame_color(frame, model)
         
         # Display the resulting frame
         cv2.imshow('frame', frame)
