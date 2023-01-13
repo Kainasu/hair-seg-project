@@ -14,21 +14,15 @@ def apply_model_on_video(model, video_path, output_path, color):
         ret, frame = cap.read()
         if ret == True:
             frame_1 = cv2.resize(frame, (128, 128))
-            frame_1 = cv2.cvtColor(frame_1, cv2.COLOR_BGR2RGB)
-            
+
             mask = np.expand_dims(frame_1, axis=0)
             mask = mask / 255.
             mask = model.predict(mask)
             
-            treshold = 0.7
-            pred_mask = ((mask > treshold) * 255.)
-            mask = pred_mask[0]
-            mask = mask.astype(np.uint8)
-            mask = np.squeeze(mask, axis=2)
+            mask = np.squeeze(mask)
             
             result=change_color(frame_1, mask, color)
             
-            result= cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
             result = cv2.resize(result, (frame_width, frame_height))
             out.write(result)
             
