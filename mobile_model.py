@@ -77,7 +77,7 @@ def create_mobile_unet(image_size=(128,128,3), pretrained=True):
 
     model = Model(inputs=[inputs], outputs=[outputs])
 
-    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['acc', BinaryIoU()])
+    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['acc', BinaryIoU(target_class_ids=[1])])
 
     return model
     

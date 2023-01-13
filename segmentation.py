@@ -1,6 +1,6 @@
 import argparse
 import numpy as np
-
+from keras import backend as K
 import matplotlib.pyplot as plt
 from keras.models import load_model
 import time
@@ -39,11 +39,11 @@ def predict_and_plot(img_path, model, color, mask_path=None):
     pred = predict(img, model)
     
     treshold = 0.7
-    pred_mask = ((pred > treshold) * 255.)
+    pred_mask = ((pred > treshold) * 255.)[..., np.newaxis].repeat(3, axis=2)
     
     fig, axes = plt.subplots(nrows=1, ncols=ncols)    
     plt.subplot(1,ncols,1)    
-    plt.imshow(img)
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     plt.title("Original")
     plt.subplot(1,ncols,2)
     plt.imshow(pred_mask)
