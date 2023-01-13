@@ -20,3 +20,5 @@ python3 run_train_segmentation.py --dataset Lfw --model-type mobile_unet --augme
 python3 run_train_segmentation.py --dataset Lfw --model-type mobile_unet --no-augmentation --pretrained
 python3 run_train_segmentation.py --dataset Lfw+Figaro1k --model-type mobile_unet --augmentation --pretrained
 python3 run_train_segmentation.py --dataset Lfw+Figaro1k --model-type mobile_unet --no-augmentation --pretrained
+
+python3 baseline.py
