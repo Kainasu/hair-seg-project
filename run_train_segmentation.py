@@ -34,6 +34,10 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int,
                     help='Number of epochs to train the model for', default=50)
 
+    # Add argument for input size
+    parser.add_argument('--size', type=int,
+                    help='Input size', default=128)
+
     # Add argument for model type
     parser.add_argument('--model-type', type=str, dest='model_type', choices=['unet', 'mobile_unet'],
     help='model used (unet or mobile_unet)', default='unet')
@@ -51,18 +55,19 @@ if __name__ == '__main__':
     epochs = args.epochs
     test_dataset = ['Lfw', 'Figaro1k', 'Lfw+Figaro1k'] if args.test_dataset == 'all' else [args.test_dataset]    
     model_type = args.model_type
+    image_size = (args.size, args.size, 3)
     
     # Create model and generators for training
     if model_type == 'unet':
-        model = create_unet()
+        model = create_unet(image_size=image_size)
     else : 
-        model = create_mobile_unet(pretrained=pretrained)
+        model = create_mobile_unet(pretrained=pretrained, image_size=image_size)
         model_type = f'{model_type}-{pretrain}'
-    train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset_path, augmentation=augmentation)
+    train_generator, val_generator, train_steps, val_steps = create_training_generators(dataset=dataset_path, augmentation=augmentation, image_size=image_size)
 
     #Create directory to save model and history    
     now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-    dirname = f'models/{model_type}/{dataset}-{aug}'
+    dirname = f'models/{model_type}/{dataset}-{aug}/{image_size[0]}x{image_size[1]}'
     save_dir = os.path.join(dirname, f'model-{now}')
     latest_dir = os.path.join(dirname, 'latest')
     os.makedirs(latest_dir, exist_ok=True)
@@ -112,7 +117,7 @@ if __name__ == '__main__':
     # Generate mask from testing set
     for test_set in test_dataset:
         test_set_path = os.path.join('data', test_set)
-        test_generator, test_steps = create_testing_generator(dataset=test_set_path)
+        test_generator, test_steps = create_testing_generator(dataset=test_set_path, image_size=image_size)
         cols = ['Original', 'GT', 'pred', 'tresholded pred']
         max_png = 5
         fig, axes = plt.subplots(15, 4, figsize=(10, 20))

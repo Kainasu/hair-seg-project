@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
-def create_training_generators(dataset = None, augmentation=True):
+def create_training_generators(dataset = None, augmentation=True, image_size=(128, 128, 3)):
     """return generator containing training and validation generators to fit model"""
 
     if dataset is None:
@@ -28,13 +28,13 @@ def create_training_generators(dataset = None, augmentation=True):
         )
 
     image_args = dict(color_mode = "rgb",
-        target_size=(128,128),
+        target_size=(image_size[0], image_size[1]),
         class_mode=None,
         batch_size=32,
         seed=42
     )
 
-    mask_args = dict(target_size=(128, 128), 
+    mask_args = dict(target_size=(image_size[0], image_size[1]), 
         batch_size=32,
         color_mode = "grayscale",
         interpolation = "nearest",  
@@ -74,7 +74,7 @@ def create_training_generators(dataset = None, augmentation=True):
 
     return train_generator, val_generator, len(image_train_generator), len(image_val_generator)
 
-def create_testing_generator(dataset = None, shuffle=False):
+def create_testing_generator(dataset = None, shuffle=False, image_size=(128,128, 3)):
     if dataset is None:
         dataset = 'data/Figaro1k'
     
@@ -84,7 +84,7 @@ def create_testing_generator(dataset = None, shuffle=False):
     image_test_generator = image_test_datagen.flow_from_directory(
     os.path.join(test_dir, 'imgs'),
     color_mode = "rgb",
-    target_size=(128,128),
+    target_size=(image_size[0], image_size[1]),
     class_mode=None,
     shuffle=shuffle,
     batch_size=1,
@@ -95,7 +95,7 @@ def create_testing_generator(dataset = None, shuffle=False):
     mask_test_generator = mask_test_datagen.flow_from_directory(
     os.path.join(test_dir, 'masks'),
     color_mode = "grayscale",
-    target_size=(128,128),
+    target_size=(image_size[0], image_size[1]),
     class_mode=None,
     shuffle=shuffle,
     batch_size=1,

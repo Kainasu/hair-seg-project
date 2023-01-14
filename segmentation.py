@@ -7,7 +7,8 @@ import time
 from coloration import change_color
 import cv2
 
-def predict(image, model, height=128, width=128):
+def predict(image, model, image_size=(128,128,3)):
+    height, width, _ = image_size
     im = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     model = load_model(model)
     """Preprocess the input image before prediction"""
@@ -19,11 +20,11 @@ def predict(image, model, height=128, width=128):
     return mask
 
 
-def predict_and_plot(img_path, model, color, mask_path=None):
+def predict_and_plot(img_path, model, color, mask_path=None, image_size=(128,128,3)):
     ncols = 2
-
+    dim = (image_size[0], image_size[1])
     img = cv2.imread(img_path)
-    img = cv2.resize(img, (128, 128))
+    img = cv2.resize(img, dim)
 
     if color is not None:
         ncols += 1
@@ -32,11 +33,11 @@ def predict_and_plot(img_path, model, color, mask_path=None):
     if mask_path is not None:
 
         mask = cv2.imread(mask_path)
-        mask = cv2.resize(mask, (128, 128))
+        mask = cv2.resize(mask, dim)
         ncols += 1
         col_mask = 3 if ncols < 4 else 4
 
-    pred = predict(img, model)
+    pred = predict(img, model, image_size=image_size)
     
     treshold = 0.7
     pred_mask = ((pred > treshold) * 255.)[..., np.newaxis].repeat(3, axis=2)
@@ -71,6 +72,8 @@ if __name__ == '__main__':
     parser.add_argument('--mask', dest='mask_path', action='store')
     parser.add_argument('--model', dest='model', action='store', required=True)
     parser.add_argument('--color', dest='color', action='store', required=False)
+    parser.add_argument('--size', dest='size', type=int, default=128)
     args = parser.parse_args()
+    image_size = (args.size, args.size, 3)
     
-    predict_and_plot(args.img_path, args.model, args.color, mask_path=args.mask_path)
+    predict_and_plot(args.img_path, args.model, args.color, mask_path=args.mask_path, image_size=image_size)
