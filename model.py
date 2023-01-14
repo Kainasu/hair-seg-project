@@ -2,6 +2,7 @@ from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Conv2
 from keras.models import Model
 from keras.losses import BinaryCrossentropy
 from keras.metrics import BinaryIoU
+import argparse
 
 def conv_block(inputs, filters):
     x = Conv2D(filters, (3,3) , activation='relu', padding="same")(inputs)
@@ -46,5 +47,16 @@ def create_unet(image_size=(128,128,3)):
     return model
     
 if __name__ == '__main__':
-    model = create_unet()
+
+    parser = argparse.ArgumentParser()
+
+    # Add argument for input size
+    parser.add_argument('--size', type=int,
+                    help='Input size', default=128)
+
+    args = parser.parse_args()
+    
+    image_size = (args.size, args.size, 3)
+
+    model = create_unet(image_size=image_size)
     model.summary()

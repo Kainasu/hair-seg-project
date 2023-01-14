@@ -4,7 +4,6 @@ from keras.models import Model
 from keras.layers import Input, Lambda
 from keras.losses import BinaryCrossentropy
 from keras.metrics import BinaryIoU
-import matplotlib.pyplot as plt
 import argparse
 
 def create_backgroundBaseline(image_size=(128,128,3)):    

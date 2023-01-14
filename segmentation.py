@@ -7,24 +7,18 @@ import time
 from coloration import change_color
 import cv2
 
-def predict(image, model, image_size=(128,128,3)):
-    height, width, _ = image_size
-    im = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    model = load_model(model)
-    """Preprocess the input image before prediction"""
-    im = im / 255
-    im = cv2.resize(im, (height, width))
-    im = im.reshape((1,) + im.shape)
-    pred = model.predict(im)   
-    mask = pred.reshape((height, width))
-    return mask
 
-
-def predict_and_plot(img_path, model, color, mask_path=None, image_size=(128,128,3)):
+def predict_and_plot(img_path, model, color, mask_path=None):
     ncols = 2
-    dim = (image_size[0], image_size[1])
+
+    #Load model and get inputs dims    
+    model = load_model(model)
+    _, height, width, _ = model.layers[0].input_shape[0]    
+
+    #Load image
     img = cv2.imread(img_path)
-    img = cv2.resize(img, dim)
+    img = cv2.resize(img, (height, width))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     if color is not None:
         ncols += 1
@@ -33,18 +27,22 @@ def predict_and_plot(img_path, model, color, mask_path=None, image_size=(128,128
     if mask_path is not None:
 
         mask = cv2.imread(mask_path)
-        mask = cv2.resize(mask, dim)
+        mask = cv2.resize(mask, (height, width))
         ncols += 1
         col_mask = 3 if ncols < 4 else 4
 
-    pred = predict(img, model, image_size=image_size)
+    """Preprocess the input image before prediction"""
+    img = img / 255
+    img = img.reshape((1,) + img.shape)
+    pred = model.predict(img)       
+    pred = np.squeeze(mask)
     
     treshold = 0.7
-    pred_mask = ((pred > treshold) * 255.)[..., np.newaxis].repeat(3, axis=2)
+    pred_mask = ((pred > treshold) * 255.)[..., np.newaxis].repeat(3, axis=2)    
     
     fig, axes = plt.subplots(nrows=1, ncols=ncols)    
     plt.subplot(1,ncols,1)    
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    plt.imshow(img)
     plt.title("Original")
     plt.subplot(1,ncols,2)
     plt.imshow(pred_mask)
@@ -72,8 +70,6 @@ if __name__ == '__main__':
     parser.add_argument('--mask', dest='mask_path', action='store')
     parser.add_argument('--model', dest='model', action='store', required=True)
     parser.add_argument('--color', dest='color', action='store', required=False)
-    parser.add_argument('--size', dest='size', type=int, default=128)
     args = parser.parse_args()
-    image_size = (args.size, args.size, 3)
-    
-    predict_and_plot(args.img_path, args.model, args.color, mask_path=args.mask_path, image_size=image_size)
+
+    predict_and_plot(args.img_path, args.model, args.color, mask_path=args.mask_path)

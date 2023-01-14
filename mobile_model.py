@@ -3,6 +3,7 @@ from keras.models import Model
 from keras.losses import BinaryCrossentropy
 from keras.metrics import BinaryIoU
 from keras.applications import MobileNetV2
+import argparse
 
 def conv_block(inputs, filters):
     x = Conv2D(filters, (3,3) , activation='relu', padding="same")(inputs)
@@ -83,5 +84,16 @@ def create_mobile_unet(image_size=(128,128,3), pretrained=True):
     
 
 if __name__ == '__main__':
-    model = create_mobile_unet(pretrained=False)
+
+    parser = argparse.ArgumentParser()
+
+    # Add argument for input size
+    parser.add_argument('--size', type=int,
+                    help='Input size', default=128)
+
+    args = parser.parse_args()
+    
+    image_size = (args.size, args.size, 3)
+
+    model = create_mobile_unet(pretrained=False, image_size=image_size)
     model.summary()
