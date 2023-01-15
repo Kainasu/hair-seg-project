@@ -5,7 +5,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
 
-    columns = ['model', 'dataset', 'augmentation', 'test_dataset']
+    columns = ['model', 'dataset', 'augmentation', 'test_dataset', 'input_size']
 
     parser = argparse.ArgumentParser()
 

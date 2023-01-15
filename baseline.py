@@ -38,9 +38,9 @@ if __name__ == '__main__':
     
     image_size = (args.size, args.size, 3)
 
-    backgroundBaseline_path = f'models/baseline/onlyBlack/{args.size}x{args.size}'
+    backgroundBaseline_path = f'models/baseline/onlyBlack/{args.size}x{args.size}/latest'
     os.makedirs(backgroundBaseline_path, exist_ok=True)
-    whitegroundBaseline_path = f'models/baseline/onlyWhite/{args.size}x{args.size}'
+    whitegroundBaseline_path = f'models/baseline/onlyWhite/{args.size}x{args.size}/latest'
     os.makedirs(whitegroundBaseline_path, exist_ok=True)
 
     baseline1 = create_backgroundBaseline(image_size=image_size)
