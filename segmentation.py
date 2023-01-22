@@ -7,6 +7,17 @@ import time
 from coloration import change_color
 import cv2
 
+def predict(image, model, height=128, width=128):
+    im = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    model = load_model(model)
+    """Preprocess the input image before prediction"""
+    im = im / 255
+    im = cv2.resize(im, (height, width))
+    im = im.reshape((1,) + im.shape)
+    pred = model.predict(im)   
+    mask = pred.reshape((height, width))
+    return mask
+
 
 def predict_and_plot(img_path, model, color, mask_path=None):
     ncols = 2

@@ -14,7 +14,7 @@ def process_frame_color(frame, model, color):
     
     mask = np.squeeze(mask)
     
-    result=change_color(frame_1, mask, color)
+    result=change_color(frame_1, color, mask)
     
     result = cv2.resize(result, (frame.shape[1]*2, frame.shape[0]*2))
     return result 
