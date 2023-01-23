@@ -43,10 +43,12 @@ def image_btn():
     change_color_btn.pack(pady=12, padx=10)
 
 def load_image():
-    global img
-    global filepath
+    if img is not None:
+        img.place_forget()
+        img = None
     filepath = filedialog.askopenfilename()
     img = cv2.imread(filepath)
+
 
 def pick_color():
     color = colorchooser.askcolor()[0]
@@ -58,8 +60,11 @@ def pick_color():
     image = ImageTk.PhotoImage(Image.open(filepath))
     original_label = ctk.CTkLabel(master=image_frame, text="",image=image)
     original_label.image = img
-    original_label.pack(pady=12, padx=10)
-    label.pack(pady=12, padx=10)
+    original_label.place(x=10, y=20)
+    label.place(x=1500, y=20)
+    # label.grid(row=0, column=1, padx=10, pady=10)
+    # original_label.pack(pady=12, padx=10)
+    # label.pack(pady=12, padx=10)
 
 
 
