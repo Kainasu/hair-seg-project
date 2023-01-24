@@ -5,19 +5,22 @@ import numpy as np
 from coloration import change_color
     
 def process_frame_color(frame, model, color):
-    
-    frame_1 = cv2.resize(frame, (128, 128))
+    # if the frame is not None 
+    if frame is None:
+        return None
+    else:
+        frame_1 = cv2.resize(frame, (128, 128))
 
-    mask = np.expand_dims(frame_1, axis=0)
-    mask = mask / 255.
-    mask = model.predict(mask)
-    
-    mask = np.squeeze(mask)
-    
-    result=change_color(frame_1, color, mask)
-    
-    result = cv2.resize(result, (frame.shape[1]*2, frame.shape[0]*2))
-    return result 
+        mask = np.expand_dims(frame_1, axis=0)
+        mask = mask / 255.
+        mask = model.predict(mask)
+        
+        mask = np.squeeze(mask)
+        
+        result=change_color(frame_1, color, mask)
+        
+        result = cv2.resize(result, (frame.shape[1]*2, frame.shape[0]*2))
+        return result 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
