@@ -141,6 +141,8 @@ if __name__ == '__main__':
                     score_val = model.evaluate(val_generator, steps= val_steps)
                     score_test = model.evaluate(test_generator, steps=test_steps) 
                 else:
+                    dataset_name = None
+                    augmentation = None
                     test_dataset = 'Lfw+Figaro1k' if args.test_dataset is None else args.test_dataset
                     test_dataset_path = os.path.join('data', test_dataset)
                     test_generator, test_steps = create_testing_generator(test_dataset_path, image_size=image_size)
