@@ -5,7 +5,7 @@ from pathlib import Path
 
 if __name__ == '__main__':
 
-    columns = ['model', 'dataset', 'augmentation', 'test_dataset', 'input_size']
+    columns = ['model', 'input_size', 'dataset', 'augmentation', 'test_dataset']
 
     parser = argparse.ArgumentParser()
 
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--both', action='store_true')
 
     #Sort by
-    parser.add_argument('--sort', type=str, dest='sort', choices=['model', 'dataset'],
+    parser.add_argument('--sort', type=str, dest='sort', choices=['model', 'dataset', 'input_size'],
     help='sort by')
         
     args = parser.parse_args()
