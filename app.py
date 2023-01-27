@@ -2,7 +2,7 @@ import customtkinter as ctk
 import cv2
 import os
 from tkinter import filedialog, colorchooser
-from segmentation import change_color
+from coloration import change_color
 from PIL import ImageTk, Image
 from webcam import process_frame_color
 from keras.models import load_model
