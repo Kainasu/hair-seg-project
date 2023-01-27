@@ -51,3 +51,7 @@ def change_color(image, color, mask=None, alpha=0.85):
     out = cv2.cvtColor(out, cv2.COLOR_BGR2RGB)
     return out
 
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))  

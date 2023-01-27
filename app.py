@@ -4,7 +4,7 @@ import os
 from tkinter import filedialog, colorchooser
 from coloration import change_color
 from PIL import ImageTk, Image
-from webcam import process_frame_color
+from segmentation_realtime import process_frame_color
 from keras.models import load_model
 
 ctk.set_appearance_mode("dark")

@@ -2,14 +2,15 @@ import argparse
 import cv2
 from keras.models import load_model
 import numpy as np
-from coloration import change_color
+from coloration import change_color, hex_to_rgb
     
 def process_frame_color(frame, model, color):
+    _, height, width, _ = model.layers[0].input_shape[0]
     # if the frame is not None 
     if frame is None:
         return None
     else:
-        frame_1 = cv2.resize(frame, (256, 256))
+        frame_1 = cv2.resize(frame, (width, height))
 
         mask = np.expand_dims(frame_1, axis=0)
         mask = mask / 255.
@@ -40,7 +41,7 @@ if __name__ == '__main__':
         # by frame
         ret, frame = vid.read()
         
-        frame = process_frame_color(frame, model,args.color)
+        frame = process_frame_color(frame, model,hex_to_rgb(args.color))
         
         # Display the resulting frame
         cv2.imshow('frame', frame)
