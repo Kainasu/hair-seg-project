@@ -15,7 +15,7 @@ class App(ctk.CTk):
         super().__init__()
         self.title("Hair Segmentation App")
         self.geometry("700x450")
-        self.model = "mobile_unet.h5"
+        self.model = "model.h5"
         self.img = None
         self.filepath = None
         self.color = None

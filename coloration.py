@@ -2,9 +2,9 @@ import numpy as np
 import cv2
 from keras.models import load_model
 
-model = 'mobile_unet.h5'
-height = 128
-width = 128
+model = 'model.h5'
+height = 256
+width = 256
 
 def predict(image, model, height=128, width=128):
     im = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

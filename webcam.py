@@ -9,7 +9,7 @@ def process_frame_color(frame, model, color):
     if frame is None:
         return None
     else:
-        frame_1 = cv2.resize(frame, (128, 128))
+        frame_1 = cv2.resize(frame, (256, 256))
 
         mask = np.expand_dims(frame_1, axis=0)
         mask = mask / 255.
