@@ -70,4 +70,5 @@ if __name__ == '__main__':
     parser.add_argument('--color', dest='color', action='store', required=False)
     args = parser.parse_args()
 
-    predict_and_plot(args.img_path, args.model, hex_to_rgb(args.color) , mask_path=args.mask_path)
+    color = hex_to_rgb(args.color) if args.color is not None else None
+    predict_and_plot(args.img_path, args.model, color , mask_path=args.mask_path)

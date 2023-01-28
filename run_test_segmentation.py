@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # Add argument for dataset used for training
     parser.add_argument('--dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', 'all'],
-    help='dataset used for training', default='all')
+    help='dataset used in training', default='all')
 
     parser.add_argument('--test-dataset', dest='test_dataset', type=str, choices=['Lfw', 'Figaro1k', 'Lfw+Figaro1k', None],
     help='dataset used for testing', default=None)
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     parser.set_defaults(pretrained=True)
 
     # Add argument for model type
-    parser.add_argument('--model-type', type=str, dest='model_type', choices=['unet', 'mobile_unet', 'baseline' 'all'],
+    parser.add_argument('--model-type', type=str, dest='model_type', choices=['unet', 'mobile_unet', 'baseline', 'all'],
     help='model used', default='all')
 
     # Add argument for input size
