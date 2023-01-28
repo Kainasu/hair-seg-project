@@ -43,11 +43,20 @@ Sinon pour entraîner un modèle spécifique, lancer :
 
 Pour évaluer tous les modèles entraînés, lancer :
 
-- `python3 run_test_segmentation.py`. (Voir `python3 run_test_segmentation.py -h` pour évaluer un seul modèle en particulier)
+- `python3 run_test_segmentation.py [OPTIONS]`. (Voir `python3 run_test_segmentation.py -h` pour évaluer un seul modèle en particulier)
 
 Pour lancer l'interface graphique, lancer :
 
 - `python3 app.py`
 
+Pour tester la segmentation sur une image toute seule, lancer
 
+- `python3 segmentation_image.py [OPTIONS]`
+
+Pour tester la segmentation sur une vidéo, lancer
+
+- `python3 segmentation_video.py [OPTIONS]`
+
+Pour tester la segmentation sur une webcam, lancer
+- `python3 segmentation_webcam.py [OPTIONS]`
 
